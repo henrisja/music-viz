@@ -1,16 +1,22 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
+import IconButton from '@mui/material/IconButton';
+import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
+import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined';
 
 interface ControlsProps {
   children: React.ReactNode;
 }
 
-const Controls: React.FC<ControlsProps> = ({ children }) => {
-  console.log('in controls');
+const Controls: React.FC<ControlsProps> = (props) => {
+  const { children } = props;
+
+  const [paused, setPaused] = React.useState<boolean>(true);
 
   return (
     <div className="controls-container">
-      <Button variant="contained">Hello Button</Button>
+      <IconButton aria-label="play-button" onClick={() => setPaused(!paused)}>
+        {paused ? <PlayArrowOutlinedIcon /> : <PauseOutlinedIcon />}
+      </IconButton>
       {children}
     </div>
   );
