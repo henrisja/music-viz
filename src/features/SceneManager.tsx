@@ -15,14 +15,19 @@ const SceneManager: React.FC = () => {
   const [currentTime, setCurrentTime] = React.useState<number>(0);
 
   React.useEffect(() => {
+    const interval = setInterval(() => {
+      setDuration(audioRef.current ? audioRef.current!.duration : 0);
+      setCurrentTime(audioRef.current ? audioRef.current!.currentTime : 0);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  React.useEffect(() => {
     if (!audioFile) {
       return;
     }
 
     audioRef.current = new Audio(URL.createObjectURL(audioFile));
-
-    setDuration(audioRef.current.duration);
-
     audioRef.current.play();
   }, [audioFile]);
 
