@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { SceneManager } from './features/SceneManager';
+import SceneManager from './features/SceneManager';
 
 function App() {
   return <SceneManager />;
