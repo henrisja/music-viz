@@ -11,7 +11,19 @@ import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 
 const SceneManager: React.FC = () => {
+  const audioRef = React.useRef<HTMLAudioElement>(new Audio('../assets/newNeon.mp3'));
+
   const [paused, setPaused] = React.useState<boolean>(true);
+  const [currentTime, setCurrentTime] = React.useState<number>(0);
+  const [duration, setDuration] = React.useState<number>(audioRef.current.duration);
+
+  React.useEffect(() => {
+    console.log('clicked pause');
+    if (!paused) {
+      console.log(audioRef.current);
+      audioRef.current.play();
+    }
+  }, [paused]);
 
   return (
     <div css={sceneContainerStyling}>
@@ -19,14 +31,17 @@ const SceneManager: React.FC = () => {
         <IconButton
           css={controlElementStyling}
           aria-label="play-button"
-          onClick={() => setPaused(!paused)}
+          onClick={() => {
+            console.log('click');
+            setPaused(!paused);
+          }}
           color="secondary"
         >
           {paused ? <PlayArrowOutlinedIcon /> : <PauseOutlinedIcon />}
         </IconButton>
-        <Typography css={controlElementStyling}>{'0:00'}</Typography>
-        <Slider css={controlElementStyling} aria-label="song-slider" size="small" defaultValue={0} color="secondary" />
-        <Typography css={controlElementStyling}>{'1:00'}</Typography>
+        <Typography css={controlElementStyling}>{secondsToFormattedTime(currentTime)}</Typography>
+        <Slider css={controlElementStyling} size="small" defaultValue={0} color="secondary" />
+        <Typography css={controlElementStyling}>{secondsToFormattedTime(duration)}</Typography>
       </div>
       <Canvas>
         <ambientLight />
@@ -40,12 +55,20 @@ const SceneManager: React.FC = () => {
 
 export default SceneManager;
 
+const secondsToFormattedTime = (duration: number): string => {
+  const minutes = Math.floor(duration / 60);
+  const seconds = duration % 60;
+  return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+};
+
 const controlContainerStyling = css({
   alignItems: 'center',
-  backgroundColor: 'grey',
-  bottom: '0px',
+  backgroundColor: '#e0e0e0',
+  borderRadius: '25px',
+  bottom: '10px',
   display: 'flex',
   flexDirection: 'row',
+  height: '50px',
   padding: '10px',
   position: 'absolute',
   right: '25%',
