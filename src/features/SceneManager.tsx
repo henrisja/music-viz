@@ -4,6 +4,7 @@ import * as React from 'react';
 import { css, jsx } from '@emotion/react';
 import { Canvas } from '@react-three/fiber';
 import Box from './scenecomponents/foreground/Box';
+import WelcomeScreen from './ui/welcomescreen';
 import IconButton from '@mui/material/IconButton';
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined';
@@ -11,32 +12,41 @@ import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 
 const SceneManager: React.FC = () => {
-  const audioRef = React.useRef<HTMLAudioElement>(new Audio('../assets/newNeon.mp3'));
+  const [audioFile, setAudioFile] = React.useState<File | null>(null);
+  const [paused, setPaused] = React.useState<boolean>(false);
 
-  const [paused, setPaused] = React.useState<boolean>(true);
-  const [currentTime, setCurrentTime] = React.useState<number>(0);
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  // const audioContextRef = React.useRef();
 
-  const { duration } = audioRef.current;
-  console.log(duration);
-  console.log(audioRef.current);
+  React.useEffect(() => {
+    if (!audioFile) {
+      return;
+    }
 
-  return (
+    audioRef.current = new Audio(URL.createObjectURL(audioFile));
+    audioRef.current.play();
+  }, [audioFile]);
+
+  const handleOnAudioFileUpload = (file: File) => {
+    setAudioFile(file);
+  };
+
+  return audioFile ? (
     <div css={sceneContainerStyling}>
       <div css={controlContainerStyling}>
         <IconButton
           css={controlElementStyling}
           aria-label="play-button"
           onClick={() => {
-            console.log('click');
-            setPaused(!paused);
+            setPaused((prevPaused) => !prevPaused);
           }}
           color="secondary"
         >
           {paused ? <PlayArrowOutlinedIcon /> : <PauseOutlinedIcon />}
         </IconButton>
-        <Typography css={controlElementStyling}>{secondsToFormattedTime(currentTime)}</Typography>
+        <Typography css={controlElementStyling}>{secondsToFormattedTime(0)}</Typography>
         <Slider css={controlElementStyling} size="small" defaultValue={0} color="secondary" />
-        <Typography css={controlElementStyling}>{secondsToFormattedTime(duration)}</Typography>
+        <Typography css={controlElementStyling}>{secondsToFormattedTime(200)}</Typography>
       </div>
       <Canvas>
         <ambientLight />
@@ -45,6 +55,8 @@ const SceneManager: React.FC = () => {
         <Box position={[1.2, 0, 0]} />
       </Canvas>
     </div>
+  ) : (
+    <WelcomeScreen onFileUpload={handleOnAudioFileUpload} />
   );
 };
 
