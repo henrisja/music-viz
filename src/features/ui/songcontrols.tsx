@@ -33,7 +33,13 @@ const SongControls: React.FC<ISongControls> = (props) => {
         {paused ? <PlayArrowOutlinedIcon /> : <PauseOutlinedIcon />}
       </IconButton>
       <Typography css={controlElementStyling}>{secondsToFormattedTime(currentTime)}</Typography>
-      <Slider css={controlElementStyling} size="small" defaultValue={0} color="secondary" />
+      <Slider
+        css={controlElementStyling}
+        size="small"
+        value={(currentTime / duration) * 100}
+        defaultValue={0}
+        color="secondary"
+      />
       <Typography css={controlElementStyling}>{secondsToFormattedTime(duration)}</Typography>
     </div>
   );
@@ -57,8 +63,8 @@ const controlContainerStyling = css({
   height: '50px',
   padding: '10px',
   position: 'absolute',
-  right: '25%',
-  width: '50%',
+  left: '35%',
+  width: '30%',
   zIndex: 1,
 });
 

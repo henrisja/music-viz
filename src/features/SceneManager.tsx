@@ -8,17 +8,17 @@ import WelcomeScreen from './ui/welcomescreen';
 import SongControls from './ui/songcontrols';
 
 const SceneManager: React.FC = () => {
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
-
   const [audioFile, setAudioFile] = React.useState<File | null>(null);
-  const [duration, setDuration] = React.useState<number>(0);
   const [currentTime, setCurrentTime] = React.useState<number>(0);
+  const [duration, setDuration] = React.useState<number>(1);
+
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setDuration(audioRef.current ? audioRef.current!.duration : 0);
       setCurrentTime(audioRef.current ? audioRef.current!.currentTime : 0);
-    }, 1000);
+      setDuration(audioRef.current ? audioRef.current!.duration : 1);
+    }, 250);
     return () => clearInterval(interval);
   }, []);
 
