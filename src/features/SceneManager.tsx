@@ -5,18 +5,14 @@ import { css, jsx } from '@emotion/react';
 import { Canvas } from '@react-three/fiber';
 import Box from './scenecomponents/foreground/Box';
 import WelcomeScreen from './ui/welcomescreen';
-import IconButton from '@mui/material/IconButton';
-import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
-import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined';
-import Slider from '@mui/material/Slider';
-import Typography from '@mui/material/Typography';
+import SongControls from './ui/songcontrols';
 
 const SceneManager: React.FC = () => {
-  const [audioFile, setAudioFile] = React.useState<File | null>(null);
-  const [paused, setPaused] = React.useState<boolean>(false);
-
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
-  // const audioContextRef = React.useRef();
+
+  const [audioFile, setAudioFile] = React.useState<File | null>(null);
+  const [duration, setDuration] = React.useState<number>(0);
+  const [currentTime, setCurrentTime] = React.useState<number>(0);
 
   React.useEffect(() => {
     if (!audioFile) {
@@ -24,8 +20,19 @@ const SceneManager: React.FC = () => {
     }
 
     audioRef.current = new Audio(URL.createObjectURL(audioFile));
+
+    setDuration(audioRef.current.duration);
+
     audioRef.current.play();
   }, [audioFile]);
+
+  const handleOnSelectPause = (paused: boolean) => {
+    if (!audioFile) {
+      return;
+    }
+
+    paused ? audioRef.current!.pause() : audioRef.current!.play();
+  };
 
   const handleOnAudioFileUpload = (file: File) => {
     setAudioFile(file);
@@ -33,21 +40,7 @@ const SceneManager: React.FC = () => {
 
   return audioFile ? (
     <div css={sceneContainerStyling}>
-      <div css={controlContainerStyling}>
-        <IconButton
-          css={controlElementStyling}
-          aria-label="play-button"
-          onClick={() => {
-            setPaused((prevPaused) => !prevPaused);
-          }}
-          color="secondary"
-        >
-          {paused ? <PlayArrowOutlinedIcon /> : <PauseOutlinedIcon />}
-        </IconButton>
-        <Typography css={controlElementStyling}>{secondsToFormattedTime(0)}</Typography>
-        <Slider css={controlElementStyling} size="small" defaultValue={0} color="secondary" />
-        <Typography css={controlElementStyling}>{secondsToFormattedTime(200)}</Typography>
-      </div>
+      <SongControls onSelectPause={handleOnSelectPause} currentTime={currentTime} duration={duration} />
       <Canvas>
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
@@ -61,31 +54,6 @@ const SceneManager: React.FC = () => {
 };
 
 export default SceneManager;
-
-const secondsToFormattedTime = (duration: number): string => {
-  const minutes = Math.floor(duration / 60);
-  const seconds = duration % 60;
-  return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-};
-
-const controlContainerStyling = css({
-  alignItems: 'center',
-  backgroundColor: '#e0e0e0',
-  borderRadius: '25px',
-  bottom: '10px',
-  display: 'flex',
-  flexDirection: 'row',
-  height: '50px',
-  padding: '10px',
-  position: 'absolute',
-  right: '25%',
-  width: '50%',
-  zIndex: 1,
-});
-
-const controlElementStyling = css({
-  margin: '10px',
-});
 
 const sceneContainerStyling = css({
   width: window.innerWidth,
