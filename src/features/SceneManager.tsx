@@ -15,15 +15,10 @@ const SceneManager: React.FC = () => {
 
   const [paused, setPaused] = React.useState<boolean>(true);
   const [currentTime, setCurrentTime] = React.useState<number>(0);
-  const [duration, setDuration] = React.useState<number>(audioRef.current.duration);
 
-  React.useEffect(() => {
-    console.log('clicked pause');
-    if (!paused) {
-      console.log(audioRef.current);
-      audioRef.current.play();
-    }
-  }, [paused]);
+  const { duration } = audioRef.current;
+  console.log(duration);
+  console.log(audioRef.current);
 
   return (
     <div css={sceneContainerStyling}>
