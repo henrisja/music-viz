@@ -6,7 +6,6 @@ import Dropzone from 'react-dropzone';
 import useStore from '../store/store';
 
 const WelcomeScreen: React.FC = (props) => {
-  const audioElement = useStore((state) => state.audioElement);
   const setAudioElement = useStore((state) => state.setAudioElement);
 
   const [fileRejected, setFileRejected] = React.useState<boolean>(false);

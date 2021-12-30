@@ -7,11 +7,23 @@ import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
+import useStore from '../store/store';
 
 const SongControls: React.FC = (props) => {
-  const [paused, setPaused] = React.useState<boolean>(false);
+  const [currentTime, setCurrentTime] = React.useState<number>(0);
+  const [duration, setDuration] = React.useState<number>(1);
 
-  console.log('render controls');
+  const audioElement = useStore((state) => state.audioElement);
+  const paused = useStore((state) => state.paused);
+  const togglePaused = useStore((state) => state.togglePaused);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(audioElement ? audioElement!.currentTime : 0);
+      setDuration(audioElement ? audioElement!.duration : 1);
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div css={controlContainerStyling}>
@@ -19,23 +31,24 @@ const SongControls: React.FC = (props) => {
         css={controlElementStyling}
         aria-label="play-button"
         onClick={() => {
-          console.log('paused!');
-          // onSelectPause(!paused);
-          // setPaused((prevPaused) => !prevPaused);
+          if (audioElement) {
+            paused ? audioElement!.play() : audioElement!.pause();
+          }
+          togglePaused();
         }}
         color="secondary"
       >
         {paused ? <PlayArrowOutlinedIcon /> : <PauseOutlinedIcon />}
       </IconButton>
-      <Typography css={controlElementStyling}>{secondsToFormattedTime(0)}</Typography>
+      <Typography css={controlElementStyling}>{secondsToFormattedTime(currentTime)}</Typography>
       <Slider
         css={controlElementStyling}
         size="small"
-        // value={(currentTime / duration) * 100}
+        value={(currentTime / duration) * 100}
         defaultValue={0}
         color="secondary"
       />
-      <Typography css={controlElementStyling}>{secondsToFormattedTime(200)}</Typography>
+      <Typography css={controlElementStyling}>{secondsToFormattedTime(duration)}</Typography>
     </div>
   );
 };

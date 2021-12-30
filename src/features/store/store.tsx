@@ -13,6 +13,7 @@ interface AudioStateStore {
   audioFile: File | null;
   audioElement: HTMLAudioElement | null;
   audioContext: AudioContext | null;
+  togglePaused: () => void;
   setAudioState: (newAudioState: AudioState) => void;
   setAudioFile: (newAudioFile: File) => void;
   setAudioElement: (newAudioElement: HTMLAudioElement) => void;
@@ -21,10 +22,11 @@ interface AudioStateStore {
 
 const useStore = create<AudioStateStore>((set) => ({
   audioState: { beat: false, volume: 0, fft: [], bpm: 0 },
-  paused: true,
+  paused: false,
   audioFile: null,
   audioElement: null,
   audioContext: null,
+  togglePaused: () => set((state) => ({ paused: !state.paused })),
   setAudioState: (newAudioState) => set((_) => ({ audioState: newAudioState })),
   setAudioFile: (newAudioFile) => set((_) => ({ audioFile: newAudioFile })),
   setAudioElement: (newAudioElement) => set((_) => ({ audioElement: newAudioElement })),

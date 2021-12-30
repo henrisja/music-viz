@@ -11,14 +11,7 @@ import useStore from './store/store';
 const SceneManager: React.FC = () => {
   const audioElement = useStore((state) => state.audioElement);
 
-  // React.useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setCurrentTime(audioRef.current ? audioRef.current!.currentTime : 0);
-  //     setDuration(audioRef.current ? audioRef.current!.duration : 1);
-  //   }, 250);
-  //   return () => clearInterval(interval);
-  // }, []);
-
+  // TODO - see if this can be made into a declarative
   React.useEffect(() => {
     if (!audioElement) {
       return;
@@ -26,18 +19,6 @@ const SceneManager: React.FC = () => {
 
     audioElement.play();
   }, [audioElement]);
-
-  // const handleOnSelectPause = (paused: boolean) => {
-  //   if (!audioFile) {
-  //     return;
-  //   }
-
-  //   paused ? audioRef.current!.pause() : audioRef.current!.play();
-  // };
-
-  // const handleOnAudioFileUpload = (file: File) => {
-  //   setAudioFile(file);
-  // };
 
   return audioElement ? (
     <div css={sceneContainerStyling}>
