@@ -8,16 +8,10 @@ import PauseOutlinedIcon from '@mui/icons-material/PauseOutlined';
 import Slider from '@mui/material/Slider';
 import Typography from '@mui/material/Typography';
 
-interface ISongControls {
-  onSelectPause(paused: boolean): void;
-  duration: number;
-  currentTime: number;
-}
-
-const SongControls: React.FC<ISongControls> = (props) => {
-  const { onSelectPause, duration, currentTime } = props;
-
+const SongControls: React.FC = (props) => {
   const [paused, setPaused] = React.useState<boolean>(false);
+
+  console.log('render controls');
 
   return (
     <div css={controlContainerStyling}>
@@ -25,22 +19,23 @@ const SongControls: React.FC<ISongControls> = (props) => {
         css={controlElementStyling}
         aria-label="play-button"
         onClick={() => {
-          onSelectPause(!paused);
-          setPaused((prevPaused) => !prevPaused);
+          console.log('paused!');
+          // onSelectPause(!paused);
+          // setPaused((prevPaused) => !prevPaused);
         }}
         color="secondary"
       >
         {paused ? <PlayArrowOutlinedIcon /> : <PauseOutlinedIcon />}
       </IconButton>
-      <Typography css={controlElementStyling}>{secondsToFormattedTime(currentTime)}</Typography>
+      <Typography css={controlElementStyling}>{secondsToFormattedTime(0)}</Typography>
       <Slider
         css={controlElementStyling}
         size="small"
-        value={(currentTime / duration) * 100}
+        // value={(currentTime / duration) * 100}
         defaultValue={0}
         color="secondary"
       />
-      <Typography css={controlElementStyling}>{secondsToFormattedTime(duration)}</Typography>
+      <Typography css={controlElementStyling}>{secondsToFormattedTime(200)}</Typography>
     </div>
   );
 };

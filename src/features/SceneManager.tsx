@@ -6,46 +6,42 @@ import { Canvas } from '@react-three/fiber';
 import Box from './scenecomponents/foreground/Box';
 import WelcomeScreen from './ui/welcomescreen';
 import SongControls from './ui/songcontrols';
+import useStore from './store/store';
 
 const SceneManager: React.FC = () => {
-  const [audioFile, setAudioFile] = React.useState<File | null>(null);
-  const [currentTime, setCurrentTime] = React.useState<number>(0);
-  const [duration, setDuration] = React.useState<number>(1);
+  const audioElement = useStore((state) => state.audioElement);
 
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(audioRef.current ? audioRef.current!.currentTime : 0);
-      setDuration(audioRef.current ? audioRef.current!.duration : 1);
-    }, 250);
-    return () => clearInterval(interval);
-  }, []);
+  // React.useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCurrentTime(audioRef.current ? audioRef.current!.currentTime : 0);
+  //     setDuration(audioRef.current ? audioRef.current!.duration : 1);
+  //   }, 250);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   React.useEffect(() => {
-    if (!audioFile) {
+    if (!audioElement) {
       return;
     }
 
-    audioRef.current = new Audio(URL.createObjectURL(audioFile));
-    audioRef.current.play();
-  }, [audioFile]);
+    audioElement.play();
+  }, [audioElement]);
 
-  const handleOnSelectPause = (paused: boolean) => {
-    if (!audioFile) {
-      return;
-    }
+  // const handleOnSelectPause = (paused: boolean) => {
+  //   if (!audioFile) {
+  //     return;
+  //   }
 
-    paused ? audioRef.current!.pause() : audioRef.current!.play();
-  };
+  //   paused ? audioRef.current!.pause() : audioRef.current!.play();
+  // };
 
-  const handleOnAudioFileUpload = (file: File) => {
-    setAudioFile(file);
-  };
+  // const handleOnAudioFileUpload = (file: File) => {
+  //   setAudioFile(file);
+  // };
 
-  return audioFile ? (
+  return audioElement ? (
     <div css={sceneContainerStyling}>
-      <SongControls onSelectPause={handleOnSelectPause} currentTime={currentTime} duration={duration} />
+      <SongControls />
       <Canvas>
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
@@ -54,7 +50,7 @@ const SceneManager: React.FC = () => {
       </Canvas>
     </div>
   ) : (
-    <WelcomeScreen onFileUpload={handleOnAudioFileUpload} />
+    <WelcomeScreen />
   );
 };
 
