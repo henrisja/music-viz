@@ -10,27 +10,44 @@ type AudioState = {
 interface AudioStateStore {
   audioState: AudioState;
   paused: boolean;
-  audioFile: File | null;
   audioElement: HTMLAudioElement | null;
   audioContext: AudioContext | null;
+  audioSource: MediaElementAudioSourceNode | null;
+  audioAnalyzer: AnalyserNode | null;
   togglePaused: () => void;
   setAudioState: (newAudioState: AudioState) => void;
-  setAudioFile: (newAudioFile: File) => void;
   setAudioElement: (newAudioElement: HTMLAudioElement) => void;
-  setAudioContext: (newAudioContext: AudioContext) => void;
+  setAudioAnalyzerComponents: (newAudioElement: HTMLAudioElement) => void;
 }
 
 const useStore = create<AudioStateStore>((set) => ({
   audioState: { beat: false, volume: 0, fft: [], bpm: 0 },
-  paused: false,
-  audioFile: null,
+  paused: true,
   audioElement: null,
   audioContext: null,
+  audioSource: null,
+  audioAnalyzer: null,
   togglePaused: () => set((state) => ({ paused: !state.paused })),
   setAudioState: (newAudioState) => set((_) => ({ audioState: newAudioState })),
-  setAudioFile: (newAudioFile) => set((_) => ({ audioFile: newAudioFile })),
   setAudioElement: (newAudioElement) => set((_) => ({ audioElement: newAudioElement })),
-  setAudioContext: (newAudioContext) => set((_) => ({ audioContext: newAudioContext })),
+  setAudioAnalyzerComponents: (newAudioElement) => {
+    const context = new AudioContext();
+    // does it need to be playing before this?
+    const source = context.createMediaElementSource(newAudioElement);
+    // why would I ever want to spell analyzer with an s?
+    const analyzer = context.createAnalyser();
+    analyzer.fftSize = 512;
+
+    source.connect(analyzer);
+    analyzer.connect(context.destination);
+
+    set((_) => ({
+      audioElement: newAudioElement,
+      audioContext: context,
+      audioSource: source,
+      audioAnalyzer: analyzer,
+    }));
+  },
 }));
 
 export default useStore;

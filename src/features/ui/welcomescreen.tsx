@@ -5,14 +5,14 @@ import { css, jsx } from '@emotion/react';
 import Dropzone from 'react-dropzone';
 import useStore from '../store/store';
 
-const WelcomeScreen: React.FC = (props) => {
-  const setAudioElement = useStore((state) => state.setAudioElement);
-
+const WelcomeScreen: React.FC = () => {
   const [fileRejected, setFileRejected] = React.useState<boolean>(false);
+
+  const setAudioAnalyzerComponents = useStore((state) => state.setAudioAnalyzerComponents);
 
   const handleOnFileAccepted = <T extends File>(files: T[]) => {
     setFileRejected(false);
-    setAudioElement(new Audio(URL.createObjectURL(files[0])));
+    setAudioAnalyzerComponents(new Audio(URL.createObjectURL(files[0])));
   };
 
   const handleOnFileRejected = () => {
